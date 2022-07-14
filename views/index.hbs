@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="css/main.css" />
+  </head>
+  <body>
+    
+    <h1>DEMO LANDING PAGE FOR TRANSACTABLE OFFER</h1>
+
+    <p>
+      Below is the Subscription Info once you are satisfied click on Activate
+      subscription button to activate your subscription
+    </p>
+
+    <h4>Subscription ID</h4>
+    <div id="SubId"></div>
+    <h4>Subscription Name</h4>
+    <div id="SubName"></div>
+    <h4>Offer ID</h4>
+    <div id="offerId"></div>
+    <h4>planId</h4>
+    <div id="planId"></div>
+    <h4>Publisher ID</h4>
+    <div id="publisherId"></div>
+    <h4>Subscription Status</h4>
+    <div id="saasSubscriptionStatus"></div>
+    <h4>Purchaser Email-ID</h4>
+    <div id="emailId"></div>
+    <h4>autoRenew</h4>
+    <div id="autoRenew"></div>
+    <button type="button" onclick="clickHandler()">
+      Activate my Subscription!
+    </button>
+    <script>
+      let subscription = {};
+      async function getSubData() {
+        let Token = window.location.href;
+        let marketPlaceToken = decodeURIComponent(Token).toString().slice(29);
+        let payload = { token: marketPlaceToken };
+
+        let res = await axios.post(
+          "http://localhost:3000/api/azure/getOfferDetails",
+          payload
+        );
+        // console.log(res.data);
+        let subscription = res.data.id;
+        document.getElementById("SubId").innerHTML = JSON.stringify(
+          res.data.id,
+          null,
+          4
+        );
+        document.getElementById("SubName").innerHTML = JSON.stringify(
+          res.data.subscriptionName,
+          null,
+          4
+        );
+        document.getElementById("offerId").innerHTML = JSON.stringify(
+          res.data.offerId,
+          null,
+          4
+        );
+        document.getElementById("planId").innerHTML = JSON.stringify(
+          res.data.planId,
+          null,
+          4
+        );
+        document.getElementById("publisherId").innerHTML = JSON.stringify(
+          res.data.subscription.publisherId,
+          null,
+          4
+        );
+        document.getElementById("saasSubscriptionStatus").innerHTML =
+          JSON.stringify(res.data.subscription.saasSubscriptionStatus, null, 4);
+        document.getElementById("emailId").innerHTML = JSON.stringify(
+          res.data.subscription.purchaser.emailId,
+          null,
+          4
+        );
+        document.getElementById("autoRenew").innerHTML = JSON.stringify(
+          res.data.subscription.autoRenew,
+          null,
+          4
+        );
+        let id = res.data;
+        return id;
+      }
+      subscription = getSubData();
+
+      async function clickHandler() {
+        subscription = await getSubData();
+
+        let payload = {
+          subscriptionId: subscription.id,
+          plan: subscription.planId,
+          name:subscription.subscriptionName,
+          email:subscription.subscription.purchaser.emailId
+        };
+       
+
+        let res = await axios.post(
+          "http://localhost:3000/api/azure/Activate",
+          payload
+        );
+        window.location.href = "http://localhost:3000/login";
+        console.log(res)
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,10 @@
+{
+
+    "mongoURI": "mongodb+srv://adamya:dummy@cluster0.x3tyi.mongodb.net/Mern?retryWrites=true&w=majority",
+
+    "jwtSecret" : "mysecrettoken",
+    "githubCLientId":"78374fccc4718a36006a",
+    "githubSecret":"e62775243146f0b85524d588466b638a618cde8f "
+
+}
+

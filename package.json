@@ -1,0 +1,48 @@
+{
+  "name": "dev-connectors",
+  "version": "1.0.0",
+  "description": "social media",
+  "main": "server.js",
+  "scripts": {
+    "start": "nodemon ./bin/www",
+    "server": "nodemon server"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "author": "Adamya kumar",
+  "license": "ISC",
+  "homepage": "",
+  "dependencies": {
+    "@azure/msal-node": "^1.11.0",
+    "axios": "^0.27.2",
+    "bcryptjs": "^2.4.3",
+    "config": "^3.3.7",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "debug": "^4.3.4",
+    "dotenv": "^16.0.1",
+    "ejs": "^3.1.8",
+    "express": "^4.18.1",
+    "express-ejs-layouts": "^2.5.1",
+    "express-session": "^1.17.3",
+    "express-validator": "^6.14.0",
+    "generate-password": "^1.7.0",
+    "gravatar": "^1.8.2",
+    "hbs": "^4.2.0",
+    "http-errors": "^2.0.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.2.6",
+    "morgan": "^1.10.0",
+    "node-fetch": "^3.2.7",
+    "nodemailer": "^6.7.7",
+    "nodemailer-express-handlebars": "^5.0.0",
+    "request": "^2.88.2",
+    "styled-components": "^5.3.5"
+  },
+  "devDependencies": {
+    "concurrently": "^7.0.0",
+    "nodemon": "^2.0.15"
+  }
+}

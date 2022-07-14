@@ -1,0 +1,9 @@
+{
+
+    "mongoURI": "",
+    "jwtSecret" : "mysecrettoken",
+    "githubCLientId":"78374fccc4718a36006a",
+    "githubSecret":"e62775243146f0b85524d588466b638a618cde8f"
+
+}
+
