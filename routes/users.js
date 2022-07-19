@@ -8,43 +8,48 @@ const config = require("config");
 const nodemailer = require("nodemailer");
 var generator = require("generate-password");
 
-var fetch = require('../fetch');
+var fetch = require("../fetch");
 
-
-var { GRAPH_ME_ENDPOINT } = require('../authConfig');
+var { GRAPH_ME_ENDPOINT } = require("../authConfig");
 
 // custom middleware to check auth state
 function isAuthenticated(req, res, next) {
-    if (!req.session.isAuthenticated) {
-        return res.redirect('/api/auth/signin'); // redirect to sign-in route
-    }
+  if (!req.session.isAuthenticated) {
+    return res.redirect("/api/auth/signin"); // redirect to sign-in route
+  }
 
-    next();
-};
+  next();
+}
 
-router.get('/id',
-    isAuthenticated, // check if user is authenticated
-    async function (req, res, next) {
-        res.render('id', { idTokenClaims: req.session.account.idTokenClaims });
-    }
+router.get(
+  "/id",
+  isAuthenticated, // check if user is authenticated
+  async function (req, res, next) {
+    res.render("id", { idTokenClaims: req.session.account.idTokenClaims });
+  }
 );
-router.post('/azureDeactivate',
-    isAuthenticated, // check if user is authenticated
-    async function (req, res, next) {
-       console.log(req.session.account.idTokenClaims)
-    }
+router.post(
+  "/azureDeactivate",
+  isAuthenticated, // check if user is authenticated
+  async function (req, res, next) {
+    console.log(req.session.account.idTokenClaims);
+  }
 );
 
-router.get('/profile',
-    isAuthenticated, // check if user is authenticated
-    async function (req, res, next) {
-        try {
-            const graphResponse = await fetch(GRAPH_ME_ENDPOINT, req.session.accessToken);
-            res.render('profile', { profile: graphResponse });
-        } catch (error) {
-            next(error);
-        }
+router.get(
+  "/profile",
+  isAuthenticated, // check if user is authenticated
+  async function (req, res, next) {
+    try {
+      const graphResponse = await fetch(
+        GRAPH_ME_ENDPOINT,
+        req.session.accessToken
+      );
+      res.render("profile", { profile: graphResponse });
+    } catch (error) {
+      next(error);
     }
+  }
 );
 
 var transport = nodemailer.createTransport({
@@ -55,7 +60,6 @@ var transport = nodemailer.createTransport({
     pass: "201ce69f41c0b8",
   },
 });
-
 
 /* const errors=config.get('errors'); */
 //@route  POST api/users
@@ -97,7 +101,7 @@ router.post(
       const salt = await bcrypt.genSalt(10);
       user.password = await bcrypt.hash(password, salt);
       await user.save();
-
+console.log(user)
       //Return jsonwebtoken
       const payload = {
         user: {
@@ -138,9 +142,9 @@ router.post(
 
 router.post("/delete", async (req, res) => {
   try {
-    const { SubId} = req.body;
+    const { SubId } = req.body;
     let user = await User.findOneAndRemove({ SubId });
-    console.log(user,"deleted")
+    console.log(user, "deleted");
     res.json({ msg: "user deleted" });
   } catch (e) {
     console.log(e);

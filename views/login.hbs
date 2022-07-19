@@ -24,24 +24,37 @@
           <h3 id="loginfail"></h3>
         </div>
       </div>
-      <button onclick="azureAuth()">Sign IN</button>
 
       <a href="/api/auth/signin">Sign with Azure</a>
 
       <script>
-        async function azureAuth(){ let res = await
-        axios.get("http://localhost:3000/api/auth/signin"); console.log(res) }
-        async function validate() { var username =
-        document.getElementById("username").value; var password =
-        document.getElementById("password").value; try { let payload = { email:
-        username, password: password, }; let res = await
-        axios.post("http://localhost:3000/api/auth", payload);
-        if(res.status==200){ window.location.href =
-        "http://localhost:3000/dashboard"; console.log(res.data)
-        localStorage.setItem("jwt", res.data.token);
-        localStorage.setItem("SubId", res.data.subId); } } catch (e) {
-        document.getElementById("loginfail").innerHTML = JSON.stringify( "Please
-        try again with correct email & password", null, 4 ); } }
+  async function validate() {
+        var username = document.getElementById("username").value;
+        var password = document.getElementById("password").value;
+
+        try {
+          let payload = {
+            email: username,
+            password: password,
+          };
+          
+          let res = await axios.post("http://localhost:3000/api/auth", payload);
+          if(res.status==200){
+            localStorage.setItem("jwt", res.data.token);
+            localStorage.setItem("SubId", res.data.subId);
+            window.location.href="http://localhost:3000/api/auth/signin";
+            {{!-- window.location.href = "http://localhost:3000/dashboard"; --}}
+            console.log(res.data)
+            
+          }
+        } catch (e) {console.log(e)
+          document.getElementById("loginfail").innerHTML = JSON.stringify(
+          "Please try again with correct email & password",
+          null,
+          4
+        );
+        }
+      }
       </script>
 
     {{/if}}

@@ -1,6 +1,5 @@
 {
 
-    // "mongoURI": "mongodb+srv://adamya:dummy@cluster0.x3tyi.mongodb.net/Mern?retryWrites=true&w=majority",
     "mongoURI": "mongodb+srv://adamya:dummy@cluster0.ejakq.mongodb.net/?retryWrites=true&w=majority",
     "jwtSecret" : "mysecrettoken",
     "githubCLientId":"78374fccc4718a36006a",

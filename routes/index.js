@@ -23,4 +23,29 @@ router.get("/dashboard", (req, res) => {
   });
 });
 
+router.post("/webhook", async (req, res) => {
+  switch (req.body.action) {
+    case "Unsubscribe": {
+      console.log(req.body, "Unsubscribe");
+      break;
+    }
+    case "ChangePlan": {
+      console.log(req.body, "ChangePlan");
+      break;
+    }
+    case "ChangeQuantity": {
+      console.log(req.body.subscription.name, "ChangeQuantity");
+      break;
+    }
+    case "Renew": {
+      console.log(req.body.subscription.name, "Renew");
+      break;
+    }
+    case "Suspend": {
+      console.log(req.body.subscription.name, "Suspend");
+      break;
+    }
+  }
+});
+
 module.exports = router;
