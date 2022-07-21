@@ -1,69 +1,69 @@
-<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <link rel="stylesheet" href="css/main.css" />
-  </head>
-  <body>
-    {{#if isAuthenticated }}
-    <h1>Welcome to Powerboard you are now autheticated user</h1>
-
-    <p>
-      You can deactivate you subscription by the button below
-    </p>
-    <p>Hi {{username}}!</p>
-<a href="/api/users/id">View ID token claims</a>
-<br>
-<a href="/api/auth/acquireToken">Acquire a token to call the Microsoft Graph API</a>
-<br>
- <p> <button type="button" onclick="clickHandler1()">
-      Deactivate my Subscription
-    </button></p>
-
-    
-
-   <p> <button type="button" onclick="clickHandler()">
-      Deactivate my Subscription! And Delete My account
-    </button></p>
-   
-    <a href="/api/auth/signout">Sign out</a>
-    <script>
- async function clickHandler1(){
-  let payload = {
-            SubId: "subid",
-          };
-  let res = await axios.post("http://localhost:3000/api/users/azureDeactivate", payload);
- }
-
-
-     async function clickHandler(){
-      let subID=localStorage.getItem("SubId");
-      // console.log(subID)
-
-      try {
-          let payload = {
-            SubId: subID,
-          };
-          
-          let res = await axios.post("http://localhost:3000/api/azure/Deactivate", payload);               
-          let res1 = await axios.post("http://localhost:3000/api/users/delete", payload);
-          if(res.status==200){console.log("Subscription Deactivated")}
-          if(res1.status==200){window.location.href = "http://localhost:3000/about";}
-          
-         
-        } catch (e) {
-         console.log(e)
-        }
-     }
-    </script>
-
-
-{{else}}
-<p>Welcome to Powerboard</p>
-
-<a href="/login">Sign in</a>
-
-    {{/if}}
-  </body>
+    <head>
+        <meta charset="UTF-8" />
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <link rel="stylesheet" href="css/main.css" />
+    </head>
+    <body>
+        {{#if isAuthenticated}}
+            <h1>
+                Welcome to Powerboard you are now autheticated user
+            </h1>
+            <p>
+                You can deactivate you subscription by the button below
+            </p>
+            <p>
+                Hi
+                {{username}}
+                !
+            </p>
+            <a href="/api/users/id">
+                View ID token claims
+            </a>
+            <br />
+            <a href="/api/auth/acquireToken">
+                Acquire a token to call the Microsoft Graph API
+            </a>
+            <br />
+            <br />
+            <a href="/billing">
+                Charge Customer
+            </a>
+            <br />
+            <p>
+                <button type="button" onclick="clickHandler1()">
+                    Deactivate my Subscription
+                </button>
+            </p>
+            <p>
+                <button type="button" onclick="clickHandler()">
+                    Deactivate my Subscription! And Delete My account
+                </button>
+            </p>
+            <a href="/api/auth/signout">
+                Sign out
+            </a>
+            <script>
+                async function clickHandler1(){ let payload = { SubId: "subid",
+                }; let res = await
+                axios.post("http://localhost:3000/api/users/azureDeactivate",
+                payload); } async function clickHandler(){ let
+                subID=localStorage.getItem("SubId"); // console.log(subID) try {
+                let payload = { SubId: subID, }; let res = await
+                axios.post("http://localhost:3000/api/azure/Deactivate",
+                payload); let res1 = await
+                axios.post("http://localhost:3000/api/users/delete", payload);
+                if(res.status==200){console.log("Subscription Deactivated")}
+                if(res1.status==200){window.location.href =
+                "http://localhost:3000/about";} } catch (e) { console.log(e) } }
+            </script>
+        {{else}}
+            <p>
+                Welcome to Powerboard
+            </p>
+            <a href="/login">
+                Sign in
+            </a>
+        {{/if}}
+    </body>
 </html>

@@ -20,6 +20,15 @@ const UserSchema =new mongoose.Schema({
         require :true,
         unique:true
     },
+    tenantId:{
+        type :String,
+        require :true,
+    },
+    planId:{
+        type :String,
+        require :true,
+    },
+    
     date :{
         type : Date,
         default : Date.now

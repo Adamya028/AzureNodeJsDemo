@@ -1,0 +1,65 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="css/main.css" />
+</head>
+
+<body>
+    {{#if isAuthenticated}}
+    <h1>Charge the customer For the last hour</h1>
+    <form id="form_id" name="myform">
+        <br />
+        <label for="fname">Email of the customer Charged:</label>
+        <input type="text" id="username" name="quantity" value={{username}} />
+        <br />
+        <label for="fname">Enter Quantity for the charge:</label>
+        <input type="text" id="quantity" name="quantity" />
+
+        <br />
+        <input type="button" value="Charge" id="submit" onclick="validate()" />
+
+    </form>
+    <h4>Result</h4>
+    <div id="result"></div>
+    
+
+    <script>
+
+        async function validate() {
+            var quantity = document.getElementById("quantity").value;
+            var username = document.getElementById("username").value;
+            let payload = { email: username };
+            let res = await
+                axios.post("http://localhost:3000/api/users/userInfo", payload);
+
+            const now = new Date()
+            var d = new Date();
+            d.setHours(d.getHours() - 1);
+
+            let payload1 = {
+                SubId: res.data.subscriptionId,
+                quantity: quantity,
+                planId: res.data.planId,
+                effectiveStartTime: d.toISOString()
+            };
+
+            let res1 = await
+                axios.post("http://localhost:3000/api/azure/chargeClient", payload1);
+            console.log(res1.data)
+            document.getElementById("result").innerHTML =
+                JSON.stringify(res1.data, null, 4);
+        }
+
+    </script>
+
+    {{else}}
+    <p>Welcome to Powerboard</p>
+
+    <a href="/login">Sign in</a>
+
+    {{/if}}
+</body>
+
+</html>

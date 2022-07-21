@@ -79,7 +79,7 @@ router.post("/Activate", async (req, res) => {
   }
   //Get token for azure account
   let azureToken = await getToken();
-  let { subscriptionId, plan, name, email } = req.body;
+  let { subscriptionId, plan, name, email ,tenantId} = req.body;
   console.log();
 
   //Activate subscription
@@ -109,6 +109,8 @@ router.post("/Activate", async (req, res) => {
           name: name,
           email: email,
           subscriptionId: subscriptionId,
+          planId:plan,
+          tenantId:tenantId
         },
         headers: {
           "Content-Type": "application/json",
@@ -159,6 +161,49 @@ router.post(
     } catch (error) {
       console.log(error);
       console.log("Could not Deactivate subscription ");
+    }
+  }
+);
+
+// POST request to get Activate a Subscription
+router.post(
+  "/chargeClient",
+  [check("SubId", "Subscription ID is Required").not().isEmpty()],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    //Get token for azure account
+    let azureToken = await getToken();
+
+    let { SubId,quantity,planId,effectiveStartTime} = req.body;
+    console.log(SubId,quantity,planId,effectiveStartTime)
+    try {
+      let url = `https://marketplaceapi.microsoft.com/api/usageEvent?api-version=2018-08-31`;
+      // axios request for subcription info
+
+      let response = await axios({
+        data: {
+          resourceId: SubId,
+          quantity,
+          dimension: "cost_on_resource",
+          effectiveStartTime,
+          planId
+        },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${azureToken}`,
+        },
+        url: url,
+        method: "POST",
+      });
+      res.send("subscription charged");
+      console.log("subscription charged",response.data);
+    } catch (error) {
+      console.log(error.response.data);
+      console.log("Could not charge subscription ");
+      res.send(error.response.data);
     }
   }
 );

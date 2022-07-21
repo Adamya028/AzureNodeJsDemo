@@ -20,7 +20,19 @@ router.get("/dashboard", (req, res) => {
     title: "dashboard",
     isAuthenticated: req.session.isAuthenticated,
     username: req.session.account?.username,
+    
   });
+  
+});
+
+router.get("/billing", (req, res) => {
+  res.render("billing", {
+    title: "Billing Dashboard",
+    isAuthenticated: req.session.isAuthenticated,
+    username: req.session.account?.username,
+    accessToken:req.session.accessToken
+  });
+  
 });
 
 router.post("/webhook", async (req, res) => {
@@ -47,5 +59,7 @@ router.post("/webhook", async (req, res) => {
     }
   }
 });
+
+
 
 module.exports = router;

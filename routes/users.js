@@ -78,7 +78,7 @@ router.post(
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { name, email, subscriptionId } = req.body;
+    const { name, email, subscriptionId ,tenantId,planId} = req.body;
     const password = generator.generate({
       length: 10,
       numbers: true,
@@ -95,6 +95,8 @@ router.post(
         email,
         subscriptionId,
         password,
+        tenantId,
+        planId
       });
 
       // Encrypt password
@@ -146,6 +148,17 @@ router.post("/delete", async (req, res) => {
     let user = await User.findOneAndRemove({ SubId });
     console.log(user, "deleted");
     res.json({ msg: "user deleted" });
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+router.post("/userInfo", async (req, res) => {
+  try {
+    let{email}=req.body
+    let user = await User.findOne({ email });
+    // console.log(user)
+    res.send(user)
   } catch (e) {
     console.log(e);
   }

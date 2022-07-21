@@ -1,0 +1,17 @@
+{
+  "semi": false,
+  "overrides": [
+    {
+      "files": "*.js",
+      "options": {
+        "semi": true
+      }
+    },
+    {
+      "files": ["*.hbs"],
+      "options": {
+        "tabWidth": 4
+      }
+    }
+  ]
+}
