@@ -80,17 +80,51 @@ router.post("/", async (req, res) => {
       "2022-07-19",
       "2022-07-20"
     );
-    res.send("done")
+    res.send("done");
   } catch (e) {
-
-    console.log(e.response,"error");
+    console.log(e.response, "error");
   }
 });
 
+router.get("/test", async (req, res) => {
+  try {
+    let azureToken = req.session.accessToken;
+    let url = `https://management.azure.com/subscriptions/ea49cbb9-f6de-472f-d895-cb30363469c7?api-version=2020-01-01`;
 
-router.post("/test",async(req,res)=>{
-  console.log(req)
+    //axios request for Activation
+    let response = await axios({
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${azureToken}`,
+      },
+      url: url,
+      method: "Get",
+    });
+    console.log(response);
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+router.get("/test2", async (req, res) => {
+  try {
+    let azureToken = req.session.accessToken;
+
+    // let url = `https://management.azure.com/providers/Microsoft.Billing/billingAccounts?api-version=2019-10-01-preview`;
+
   
-})
+    // let response = await axios({
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     Authorization: `Bearer ${azureToken}`,
+    //   },
+    //   url: url,
+    //   method: "Get",
+    // });
+    // console.log(response);
+  } catch (err) {
+    console.log(err);
+  }
+});
 
 module.exports = router;
