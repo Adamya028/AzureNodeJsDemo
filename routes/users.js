@@ -52,6 +52,9 @@ router.get(
   }
 );
 
+
+
+
 var transport = nodemailer.createTransport({
   host: "smtp.mailtrap.io",
   port: 2525,
@@ -78,7 +81,7 @@ router.post(
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { name, email, subscriptionId ,tenantId,planId} = req.body;
+    const { name, email, subscriptionId ,tenantId,planId,objectId} = req.body;
     const password = generator.generate({
       length: 10,
       numbers: true,
@@ -96,7 +99,8 @@ router.post(
         subscriptionId,
         password,
         tenantId,
-        planId
+        planId,
+        objectId
       });
 
       // Encrypt password

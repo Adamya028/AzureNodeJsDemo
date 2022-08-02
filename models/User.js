@@ -24,6 +24,10 @@ const UserSchema =new mongoose.Schema({
         type :String,
         require :true,
     },
+    objectId:{
+        type :String,
+        require :true,
+    },
     planId:{
         type :String,
         require :true,

@@ -1,6 +1,15 @@
 const express = require("express");
 const router = express.Router();
 const axios = require("axios");
+const fetch = require("../fetch");
+// custom middleware to check auth state
+function isAuthenticated(req, res, next) {
+  if (!req.session.isAuthenticated) {
+    return res.redirect("/api/auth/signin"); // redirect to sign-in route
+  }
+
+  next();
+}
 const getToken = async () => {
   try {
     // URL for login
@@ -41,38 +50,6 @@ const getManagementClient = async () => {
   });
 };
 
-const getCostManagementDataByScope = async (scope, start, end) => {
-  let url = `${scope}/providers/Microsoft.CostManagement/query?api-version=2019-11-01`;
-  let query = {
-    timeframe: "Custom",
-    timePeriod: {
-      from: start,
-      to: end,
-    },
-    type: "ActualCost",
-    dataset: {
-      granularity: "None",
-      aggregation: {
-        totalCost: {
-          name: "Cost",
-          function: "Sum",
-        },
-      },
-      grouping: [
-        {
-          type: "Dimension",
-          name: "ResourceGroup",
-        },
-      ],
-    },
-  };
-
-  let client = await getManagementClient();
-  let response = await client.post(url, query);
-  console.log(await response.data.properties.rows);
-  return await response.data.properties.rows;
-};
-
 router.post("/", async (req, res) => {
   try {
     await getCostManagementDataByScope(
@@ -89,9 +66,28 @@ router.post("/", async (req, res) => {
 router.get("/test", async (req, res) => {
   try {
     let azureToken = req.session.accessToken;
-    let url = `https://management.azure.com/subscriptions/ea49cbb9-f6de-472f-d895-cb30363469c7?api-version=2020-01-01`;
+    let url = `https://graph.microsoft.com/v1.0/me`;
 
     //axios request for Activation
+    let response = await axios({
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${azureToken}`,
+      },
+      url: url,
+      method: "Get",
+    });
+    res.send(response.data);
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+router.get("/test2", async (req, res) => {
+  try {
+    let azureToken = req.session.accessToken;
+
+    let url = `https://management.azure.com/providers/Microsoft.Billing/billingAccounts?api-version=2019-10-01-preview`;
     let response = await axios({
       headers: {
         "Content-Type": "application/json",
@@ -106,25 +102,22 @@ router.get("/test", async (req, res) => {
   }
 });
 
-router.get("/test2", async (req, res) => {
-  try {
-    let azureToken = req.session.accessToken;
+router.get(
+  "/resource",
+  isAuthenticated, // check if user is authenticated
+  async function (req, res, next) {
+    try {
 
-    // let url = `https://management.azure.com/providers/Microsoft.Billing/billingAccounts?api-version=2019-10-01-preview`;
-
-  
-    // let response = await axios({
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     Authorization: `Bearer ${azureToken}`,
-    //   },
-    //   url: url,
-    //   method: "Get",
-    // });
-    // console.log(response);
-  } catch (err) {
-    console.log(err);
+      const graphResponse = await fetch(
+        "https://management.azure.com/providers/Microsoft.ResourceGraph/operations?api-version=2021-03-01",
+        req.session.accessToken
+      );
+      console.log(graphResponse)
+      res.render("resource");
+    } catch (error) {
+      console.log(error)
+    }
   }
-});
+);
 
 module.exports = router;

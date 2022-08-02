@@ -79,7 +79,7 @@ router.post("/Activate", async (req, res) => {
   }
   //Get token for azure account
   let azureToken = await getToken();
-  let { subscriptionId, plan, name, email ,tenantId} = req.body;
+  let { subscriptionId, plan, name, email ,tenantId,objectId} = req.body;
   console.log();
 
   //Activate subscription
@@ -110,7 +110,8 @@ router.post("/Activate", async (req, res) => {
           email: email,
           subscriptionId: subscriptionId,
           planId:plan,
-          tenantId:tenantId
+          tenantId:tenantId,
+          objectId:objectId
         },
         headers: {
           "Content-Type": "application/json",
@@ -208,6 +209,11 @@ router.post(
   }
 );
 
-
+router.get("/resource",async(req,res)=>{
+  try{
+    let token =getToken()
+    
+  }catch(err){console.log(err)}
+})
 
 module.exports = router;

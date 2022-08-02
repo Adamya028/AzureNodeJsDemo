@@ -21,13 +21,14 @@
 
         <input type="button" value="Charge" id="submit" onclick="validate()" />
         <br>
-        <a href="/api/azure/test2">
-            test
-        </a>
+        <input type="button" value="Graph/me" id="submit" onclick="validate1()" />
+        
 
     </form>
+    <div id="me"></div>
     <h4>Result</h4>
     <div id="result"></div>
+    <a href="/resources/test2">test</a> 
 
 
     <script>
@@ -55,6 +56,22 @@
             console.log(res1.data)
             document.getElementById("result").innerHTML =
                 JSON.stringify(res1.data, null, 4);
+        }
+
+        async function validate1() {
+            try {
+                let res = await
+                    axios.get("http://localhost:3000/api/resources/test");
+
+                document.getElementById("me").innerHTML = JSON.stringify(
+          res.data,
+          null,
+          4
+        );
+            } catch (err) { console.log(err) }
+
+
+
         }
 
     </script>
