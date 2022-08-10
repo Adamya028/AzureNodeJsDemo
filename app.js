@@ -49,6 +49,7 @@ app.use('/api/users', usersRouter);
 app.use('/api/auth', authRouter);
 app.use("/api/azure", require("./routes/azure"));
 app.use("/api/resources", require("./routes/resources"));
+app.use("/api/cost", require("./routes/cost"));
 //Login page
 app.get("/login", (req, res) => {
   res.render("login", { title: "Login Page" });

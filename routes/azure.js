@@ -199,7 +199,7 @@ router.post(
         url: url,
         method: "POST",
       });
-      res.send("subscription charged");
+      res.send(response.data);
       console.log("subscription charged",response.data);
     } catch (error) {
       console.log(error.response.data);
@@ -215,5 +215,7 @@ router.get("/resource",async(req,res)=>{
     
   }catch(err){console.log(err)}
 })
+
+
 
 module.exports = router;

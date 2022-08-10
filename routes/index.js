@@ -35,6 +35,16 @@ router.get("/billing", (req, res) => {
   
 });
 
+router.get("/subscription", (req, res) => {
+  res.render("subscription", {
+    title: "My Subscriptions",
+    isAuthenticated: req.session.isAuthenticated,
+    username: req.session.account?.username,
+    accessToken:req.session.accessToken
+  });
+  
+});
+
 router.post("/webhook", async (req, res) => {
   switch (req.body.action) {
     case "Unsubscribe": {
