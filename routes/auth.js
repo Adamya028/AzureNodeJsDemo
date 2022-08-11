@@ -106,8 +106,7 @@ router.get("/signin", async function (req, res, next) {
      * By default, MSAL Node will add OIDC scopes to the auth code request. For more information, visit:
      * https://docs.microsoft.com/azure/active-directory/develop/v2-permissions-and-consent#openid-connect-scopes
      */
-     scopes: ["User.Read.All","https://graph.microsoft.com/Directory.Read.All", "https://graph.microsoft.com/Directory.Read.All", "Directory.ReadWrite.All","offline_access","Subscription.Read.All"],
-  };
+     scopes: ["User.Read.All","https://graph.microsoft.com/Directory.Read.All", "User.ReadWrite.All", "Directory.Read.All", "Directory.ReadWrite.All","offline_access","Subscription.Read.All"],  };
 
   // trigger the first leg of auth code flow
   return redirectToAuthCodeUrl(
@@ -133,11 +132,11 @@ router.get("/acquireToken", async function (req, res, next) {
 
   const authCodeUrlRequestParams = {
     state: state,
-    scopes: ["User.Read"],
+    scopes: ["User.Read.All","https://graph.microsoft.com/Directory.Read.All", "User.ReadWrite.All", "Directory.Read.All", "Directory.ReadWrite.All","offline_access","Subscription.Read.All","Groups.Read.All"],
   };
 
   const authCodeRequestParams = {
-    scopes: ["User.Read"],
+    scopes: ["User.Read.All","https://graph.microsoft.com/Directory.Read.All", "User.ReadWrite.All", "Directory.Read.All", "Directory.ReadWrite.All","offline_access","Subscription.Read.All","Groups.Read.All"],
   };
 
   // trigger the first leg of auth code flow
