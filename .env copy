@@ -8,5 +8,5 @@ POST_LOGOUT_REDIRECT_URI=http://localhost:3000
 
 GRAPH_API_ENDPOINT="https://graph.microsoft.com/"
 EXPRESS_SESSION_SECRET="LovesCloud"
-
+MONGO=
 

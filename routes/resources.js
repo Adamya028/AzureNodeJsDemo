@@ -136,34 +136,6 @@ router.get(
   }
 );
 
-router.get(
-  "/test5",
-  isAuthenticated, // check if user is authenticated
-  async function (req, res, next) {
-    try {
-      let azureToken = await getToken();
-
-      const billingAccount =
-        "cb473ea2-af2e-5555-a35e-37f8001e0d72:8926d678-70e2-45b7-9ce7-90422cbda7ed_2018-09-30";
-
-      let url = `https://management.azure.com/providers/Microsoft.Billing/billingAccounts/${billingAccount}?api-version=2019-10-01-preview`;
-
-      //axios request for Activation
-      let response = await axios({
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${azureToken}`,
-        },
-        url: url,
-        method: "Get",
-      });
-
-      res.send(response.data);
-    } catch (err) {
-      console.log(err.response);
-    }
-  }
-);
 
 router.get(
   "/users",
