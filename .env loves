@@ -1,0 +1,12 @@
+CLOUD_INSTANCE="https://login.microsoftonline.com/"
+TENANT_ID="80f5f136-665f-4522-a96e-33f9766eedb1"
+CLIENT_ID="9ea991ac-4a1b-4783-98b8-192b694c0150"
+CLIENT_SECRET="Hl58Q~7njc.LaJprIcWEUAq5m5xzByLM.rl0_dxF"
+
+REDIRECT_URI=http://localhost:3000/api/auth/redirect
+POST_LOGOUT_REDIRECT_URI=http://localhost:3000
+
+GRAPH_API_ENDPOINT="https://graph.microsoft.com/"
+EXPRESS_SESSION_SECRET="LovesCloud"
+MONGO="mongodb+srv://adamya:dummy@cluster0.ejakq.mongodb.net/?retryWrites=true&w=majority"
+

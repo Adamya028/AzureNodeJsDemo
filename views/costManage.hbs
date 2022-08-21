@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <title>Get COst management data</title>
+</head>
+<body>
+    {{#if isAuthenticated}}
+<form id="form_id" name="myform">
+                <input
+                    type="button"
+                    value="Get details about subscriptions"
+                    id="submit"
+                    onclick="subscriptions()"
+                />
+                <br />
+                <div id="subscriptions"></div>
+                <div id="tableSub"></div>
+                <input
+                    type="button"
+                    value="Get all resource groups"
+                    id="submit"
+                    onclick="resourceGroups()"
+                />
+                <br />
+                <div id="resourceGroups"></div>
+                 <div id="tableApp"></div>
+
+                 <input
+                    type="button"
+                    value="calculate cost"
+                    id="submit"
+                    onclick="cost()"
+                />
+                <br />
+                <div id="cost"></div>
+
+</form>
+<script>
+async function subscriptions() {
+            try {
+                let res = await
+                    axios.get("http://localhost:3000/api/cost/subscriptions");
+
+                document.getElementById("subscriptions").innerHTML = JSON.stringify(
+                    res.data,
+                    null,
+                    4
+                );
+                
+            } catch (err) { console.log(err) }
+
+  }
+async function cost() {
+            try {
+                let res = await
+                    axios.get("http://localhost:3000/api/cost/costByResourceGroups");
+
+                document.getElementById("cost").innerHTML = JSON.stringify(
+                    res.data,
+                    null,
+                    4
+                );
+                
+            } catch (err) { console.log(err) }
+
+  }
+  async function resourceGroups() {
+            try {
+                let res = await
+                    axios.get("http://localhost:3000/api/cost/resourceGroups");
+                
+                let data=res.data
+                let headers = ["id","name"];
+               
+                
+                let myTable = document.querySelector('#tableApp');
+                let tableApp =document.createElement('tableApp')
+                let headerRow = document.createElement('tr');
+                                headers.forEach(headerText => {
+                                let header = document.createElement('th');
+                                let textNode = document.createTextNode(headerText);
+                                header.appendChild(textNode);
+                                headerRow.appendChild(header);
+                                })
+                myTable.appendChild(headerRow);
+                                data.forEach(emp => {
+                                let row = document.createElement('tr');
+                        
+                                Object.values(emp).forEach(text => {
+                                let cell = document.createElement('td');
+                                let textNode = document.createTextNode(text);
+                                cell.appendChild(textNode);
+                                row.appendChild(cell);
+                                    })
+                myTable.appendChild(row);
+            });
+            myTable.appendChild(tableApp);
+            } catch (err) { console.log(err) }
+
+  }
+
+</script>
+{{else}}
+            <p>
+                Welcome to Powerboard
+            </p>
+            <a href="/login">
+                Sign in
+            </a>
+        {{/if}}
+</body>
+</html>

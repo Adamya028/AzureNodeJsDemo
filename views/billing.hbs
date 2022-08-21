@@ -86,7 +86,24 @@
                 />
                 <br />
                 <div id="groups"></div>
+                <input
+                    type="button"
+                    value="Graph /subscriptions"
+                    id="submit"
+                    onclick="subscriptions()"
+                />
+                <br />
+                <div id="subcriptions"></div>
+                <input
+                    type="button"
+                    value="Graph /subscriptions"
+                    id="submit"
+                    onclick="services()"
+                />
+                <br />
+                <div id="services"></div>
             </form>
+
             <script>
                 async function validate() {
             var quantity = document.getElementById("quantity").value;
@@ -236,10 +253,41 @@ async function validate2() {
 async function groups() {
     try{
 let res = await axios.get("http://localhost:3000/api/resources/groups");
-
+document.getElementById("groups").innerHTML = JSON.stringify(
+                    res.data,
+                    null,
+                    4
+                );
     }catch(err){console.log(err)}
 }
 
+
+
+async function subscriptions() {
+    try{
+let res = await axios.get("http://localhost:3000/api/resources/subscriptions");
+document.getElementById("subcriptions").innerHTML = JSON.stringify(
+                    res.data,
+                    null,
+                    4
+                );
+    }catch(err){console.log(err)}
+}
+
+async function services() {
+            try {
+                let res = await
+                    axios.get("http://localhost:3000/api/resources/Services");
+
+                document.getElementById("services").innerHTML = JSON.stringify(
+                    res.data,
+                    null,
+                    4
+                );
+                console.log(res.data.error)
+            } catch (err) { console.log(err) }
+
+  }
             </script>
         {{else}}
             <p>

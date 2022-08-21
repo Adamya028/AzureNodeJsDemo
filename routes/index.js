@@ -35,9 +35,9 @@ router.get("/billing", (req, res) => {
   
 });
 
-router.get("/subscription", (req, res) => {
-  res.render("subscription", {
-    title: "My Subscriptions",
+router.get("/costManage", (req, res) => {
+  res.render("costManage", {
+    title: "Cost Management ",
     isAuthenticated: req.session.isAuthenticated,
     username: req.session.account?.username,
     accessToken:req.session.accessToken

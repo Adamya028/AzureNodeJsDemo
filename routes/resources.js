@@ -58,7 +58,7 @@ router.get("/test", async (req, res) => {
     });
     res.send(response.data);
   } catch (err) {
-    console.log(err);
+    console.log(err.response.data,"error in graph/me");
   }
 });
 
@@ -86,12 +86,9 @@ router.get(
   isAuthenticated, // check if user is authenticated
   async function (req, res, next) {
     try {
-      let azureToken = await getToken();
+      let azureToken = req.session.accessToken;   
 
-      const billingAccount =
-        "cb473ea2-af2e-5555-a35e-37f8001e0d72:8926d678-70e2-45b7-9ce7-90422cbda7ed_2018-09-30";
-
-      let url = `https://management.azure.com/providers/Microsoft.Billing/billingAccounts/${billingAccount}/billingSubscriptions?api-version=2019-10-01-preview`;
+      let url = `https://management.azure.com/providers/Microsoft.Billing/billingAccounts?api-version=2019-10-01-preview`;
 
       //axios request for Activation
       let response = await axios({
@@ -115,9 +112,35 @@ router.get(
   isAuthenticated, // check if user is authenticated
   async function (req, res, next) {
     try {
-      let azureToken = await getToken();
-
+      let azureToken = req.session.accessToken;
+      
       let url = `https://management.azure.com/subscriptions?api-version=2020-01-01`;
+
+      //axios request for Activation
+      let response = await axios({
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${azureToken}`,
+        },
+        url: url,
+        method: "Get",
+      });
+
+      res.send(response.data);
+    } catch (err) {
+      console.log(err.response);
+    }
+  }
+);
+
+router.get(
+  "/Services",
+  isAuthenticated, // check if user is authenticated
+  async function (req, res, next) {
+    try {
+      let azureToken = req.session.accessToken;
+      console.log()
+      let url = `https://management.azure.com/subscriptions/aa02b170-918b-44b2-bf37-74fe10998df3/providers/Microsoft.ApiManagement/service?api-version=2021-12-01-preview`;
 
       //axios request for Activation
       let response = await axios({
@@ -166,6 +189,7 @@ router.get(
   isAuthenticated, // check if user is authenticated
   async function (req, res, next) {
     try {
+   
       const graphResponse = await fetch(
         "https://graph.microsoft.com/v1.0/applications",
         req.session.accessToken
@@ -215,7 +239,7 @@ router.get(
   async function (req, res, next) {
     try {
       const graphResponse = await fetch(
-        "https://graph.microsoft.com/v1.0/b340eb25-3456-403f-be2f-af7a0d370277",
+        "https://graph.microsoft.com/v1.0/groups",
         req.session.accessToken
       );
       var jsonContent = JSON.stringify(graphResponse);
@@ -233,7 +257,38 @@ router.get(
           console.log("graph response saved(All groups) ");
         }
       );
+res.send(graphResponse)
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
 
+
+router.get(
+  "/subscriptions",
+  async function (req, res, next) {
+    try {
+      const graphResponse = await fetch(
+        "https://graph.microsoft.com/v1.0/resources",
+        req.session.accessToken
+      );
+      var jsonContent = JSON.stringify(graphResponse);
+      fs.writeFile(
+        "AllGroups.json",
+        jsonContent,
+        "utf8",
+        function (err) {
+          if (err) {
+            console.log(
+              "An error occured while writing JSON Object to File."
+            );
+            return console.log(err);
+          }
+          console.log("graph response saved(Resources) ");
+        }
+      );
+res.send(graphResponse)
     } catch (error) {
       console.log(error);
     }
