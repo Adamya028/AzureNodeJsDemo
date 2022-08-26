@@ -30,9 +30,18 @@
     <div id="emailId"></div>
     <h4>autoRenew</h4>
     <div id="autoRenew"></div>
+    <br/>
+    <div> Note-Before Activating the Subscription please check do you have Admin Access to the account </div>
+    <div> You can check it in your Role managemnet in azure portal Or you can sign in and let us help to know about your admin Rights</div>
+     <br/>
+    <a href="/api/auth/CheckSignIn">Sign with Azure</a>
+    <br/>
+     <br/>
     <button type="button" onclick="clickHandler()">
       Activate my Subscription!
     </button>
+
+
     <script>
       let subscription = {};
       async function getSubData() {

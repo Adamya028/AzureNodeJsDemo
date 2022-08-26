@@ -6,7 +6,7 @@ const config = require("config");
 const { check, validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-
+const axios = require("axios");
 var msal = require("@azure/msal-node");
 
 var {
@@ -17,6 +17,69 @@ var {
 
 const msalInstance = new msal.ConfidentialClientApplication(msalConfig);
 const cryptoProvider = new msal.CryptoProvider();
+
+
+
+const getToken = async (code,code_verifier) => {
+  try {
+    // URL for login
+    let url = `https://login.microsoftonline.com/common/oauth2/token`;
+    //Body for the token
+    let params = new URLSearchParams();
+    params.append("grant_type", "authorization_code");
+    params.append("client_id", process.env.CLIENT_ID);
+    params.append("client_secret", process.env.CLIENT_SECRET);
+    params.append("redirect_uri", process.env.REDIRECT_URI);
+    params.append("scope", "https://graph.microsoft.com/.default offline_access openid");
+    params.append("code", code);
+    params.append("code_verifier", code_verifier);
+    //axios request for the token generation
+    let response = await axios({
+      data: params.toString(),
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      url: url,
+      method: "POST",
+    });
+   
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Could not retrieve token");
+  }
+};
+
+
+const getTokenByRefreshToken = async (refreshToken) => {
+  try {
+    // URL for login
+    let url = `https://login.microsoftonline.com/common/oauth2/token`;
+    //Body for the token
+    let params = new URLSearchParams();
+    params.append("grant_type", "refresh_token");
+    params.append("client_id", process.env.CLIENT_ID);
+    params.append("client_secret", process.env.CLIENT_SECRET);
+    params.append("redirect_uri", process.env.REDIRECT_URI);
+    params.append("scope", "https://graph.microsoft.com/.default offline_access openid");
+    params.append("refresh_token", refreshToken);
+    //axios request for the token generation
+    let response = await axios({
+      data: params.toString(),
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      url: url,
+      method: "POST",
+    });
+   
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Could not retrieve token");
+  }
+};
+
 
 /**
  * Prepares the auth code request parameters and initiates the first leg of auth code flow
@@ -43,12 +106,7 @@ async function redirectToAuthCodeUrl(
     challenge: challenge,
   };
 
-  /**
-   * By manipulating the request objects below before each request, we can obtain
-   * auth artifacts with desired claims. For more information, visit:
-   * https://azuread.github.io/microsoft-authentication-library-for-js/ref/modules/_azure_msal_node.html#authorizationurlrequest
-   * https://azuread.github.io/microsoft-authentication-library-for-js/ref/modules/_azure_msal_node.html#authorizationcoderequest
-   **/
+ 
 
   req.session.authCodeUrlRequest = {
     redirectUri: REDIRECT_URI,
@@ -69,6 +127,8 @@ async function redirectToAuthCodeUrl(
     const authCodeUrlResponse = await msalInstance.getAuthCodeUrl(
       req.session.authCodeUrlRequest
     );
+console.log(authCodeUrlResponse)
+   
     res.redirect(authCodeUrlResponse);
   } catch (error) {
     next(error);
@@ -79,11 +139,6 @@ router.get("/signin", async function (req, res, next) {
   // create a GUID for crsf
   req.session.csrfToken = cryptoProvider.createNewGuid();
 
-  /**
-   * The MSAL Node library allows you to pass your custom state as state parameter in the Request object.
-   * The state parameter can also be used to encode information of the app's state before redirect.
-   * You can pass the user's state in the app, such as the page or view they were on, as input to this parameter.
-   */
   const state = cryptoProvider.base64Encode(
     JSON.stringify({
       csrfToken: req.session.csrfToken,
@@ -94,19 +149,12 @@ router.get("/signin", async function (req, res, next) {
   const authCodeUrlRequestParams = {
     state: state,
 
-    /**
-     * By default, MSAL Node will add OIDC scopes to the auth code url request. For more information, visit:
-     * https://docs.microsoft.com/azure/active-directory/develop/v2-permissions-and-consent#openid-connect-scopes
-     */
-    scopes: ['https://management.azure.com/user_impersonation']
+    scopes: ['https://management.azure.com/user_impersonation',"openid", "offline_access","https://graph.microsoft.com/Directory.Read.All","User.Read.All"]
   };
 
   const authCodeRequestParams = {
-    /**
-     * By default, MSAL Node will add OIDC scopes to the auth code request. For more information, visit:
-     * https://docs.microsoft.com/azure/active-directory/develop/v2-permissions-and-consent#openid-connect-scopes
-     */
-     scopes: ['https://management.azure.com/user_impersonation']  };
+    
+     scopes: ['https://management.azure.com/user_impersonation',"openid", "offline_access","https://graph.microsoft.com/Directory.Read.All","User.Read.All"]  };
 
   // trigger the first leg of auth code flow
   return redirectToAuthCodeUrl(
@@ -132,11 +180,11 @@ router.get("/acquireToken", async function (req, res, next) {
 
   const authCodeUrlRequestParams = {
     state: state,
-    scopes: ['https://management.azure.com/user_impersonation']
+    scopes: ['https://management.azure.com/user_impersonation',"openid", "offline_access","https://graph.microsoft.com/Directory.Read.All","User.Read.All"]
   };
 
   const authCodeRequestParams = {
-    scopes: ['https://management.azure.com/user_impersonation']
+    scopes: ['https://management.azure.com/user_impersonation',"openid", "offline_access","https://graph.microsoft.com/Directory.Read.All","User.Read.All"]
   };
 
   // trigger the first leg of auth code flow
@@ -159,13 +207,24 @@ router.post("/redirect", async function (req, res, next) {
       req.session.authCodeRequest.codeVerifier = req.session.pkceCodes.verifier; // PKCE Code Verifier
 
       try {
-        const tokenResponse = await msalInstance.acquireTokenByCode(
-          req.session.authCodeRequest
-        );
-        req.session.accessToken = tokenResponse.accessToken;
-        req.session.idToken = tokenResponse.idToken;
-        req.session.account = tokenResponse.account;
+        // const tokenResponse = await msalInstance.acquireTokenByCode(
+        //   req.session.authCodeRequest
+        // );
+        const tokenResponse1=await getToken(req.session.authCodeRequest.code,req.session.authCodeRequest.codeVerifier)
+        
+        // console.log(tokenResponse1)
+
+        req.session.accessToken = tokenResponse1.access_token;
+        req.session.idToken = tokenResponse1.id_token;
+        req.session.refreshToken = tokenResponse1.refresh_token;
+        // req.session.account = tokenResponse.account;
         req.session.isAuthenticated = true;
+        
+        const accessToken=await getTokenByRefreshToken(req.session.refreshToken)
+
+        // console.log(accessToken)
+
+
 
         res.redirect(state.redirectTo);
       } catch (error) {
@@ -192,6 +251,37 @@ router.get("/signout", function (req, res) {
   });
 });
 
+
+router.get("/CheckSignIn", async function (req, res, next) {
+  // create a GUID for crsf
+  req.session.csrfToken = cryptoProvider.createNewGuid();
+
+  const state = cryptoProvider.base64Encode(
+    JSON.stringify({
+      csrfToken: req.session.csrfToken,
+      redirectTo: "/checkAdmin",
+    })
+  );
+
+  const authCodeUrlRequestParams = {
+    state: state,
+
+    scopes: ["https://graph.microsoft.com/Directory.Read.All","User.Read.All"]
+  };
+
+  const authCodeRequestParams = {
+    
+     scopes: ["https://graph.microsoft.com/Directory.Read.All","User.Read.All"]  };
+
+  // trigger the first leg of auth code flow
+  return redirectToAuthCodeUrl(
+    req,
+    res,
+    next,
+    authCodeUrlRequestParams,
+    authCodeRequestParams
+  );
+});
 //@route  GET api/auth
 //@desc   Test route
 //@access Public

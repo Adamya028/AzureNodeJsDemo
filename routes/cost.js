@@ -48,18 +48,6 @@ const getCostManagementDataByScope = async (token, scope, start, end) => {
           type: "Dimension",
           name: "ResourceGroup",
         },
-        {
-          type: "Dimension",
-          name: "ResourceType",
-        },
-        {
-          type: "Dimension",
-          name: "ResourceId",
-        },
-        {
-          type: "Dimension",
-          name: "ResourceLocation",
-        },
       ],
     },
   };
@@ -72,7 +60,7 @@ const getCostManagementDataByScope = async (token, scope, start, end) => {
 const getAllSubscriptions = async (token) => {
   try {
     let url = `https://management.azure.com/subscriptions?api-version=2020-01-01`;
-
+// console.log(token)
     //axios request for Activation
     let response = await axios({
       headers: {
@@ -157,10 +145,12 @@ router.get(
   }
 );
 
-router.get(
+router.post(
   "/costByResourceGroups",
   isAuthenticated, // check if user is authenticated
   async function (req, res, next) {
+    const {start,end}=req.body
+    console.log("Getting Cost Data for",start,end)
     try {
       let azureToken = req.session.accessToken;
       const response = await getAllSubscriptions(azureToken);
@@ -177,8 +167,8 @@ router.get(
             const cost = await getCostManagementDataByScope(
               azureToken,
               `https://management.azure.com${R.id}`,
-              "18-aug-22 00:00",
-              "18-aug-22 01:00"
+              start,
+              end
             );
             for(let amount of cost){
               console.log(amount[0])
@@ -190,7 +180,7 @@ router.get(
         }
       }
       console.log("TotalCost",TotalCost)
-      res.send(TotalCost)
+      res.send(`${TotalCost}`)
     } catch (err) {
       console.log(err.response);
     }

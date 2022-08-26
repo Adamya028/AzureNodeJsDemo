@@ -42,25 +42,7 @@ const getToken = async () => {
   }
 };
 
-router.get("/test", async (req, res) => {
-  try {
-    let azureToken = req.session.accessToken;
-    let url = `https://graph.microsoft.com/v1.0/me`;
 
-    //axios request for Activation
-    let response = await axios({
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${azureToken}`,
-      },
-      url: url,
-      method: "Get",
-    });
-    res.send(response.data);
-  } catch (err) {
-    console.log(err.response.data,"error in graph/me");
-  }
-});
 
 router.get("/test2", async (req, res) => {
   try {

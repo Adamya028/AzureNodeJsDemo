@@ -6,6 +6,10 @@ const msalConfig = {
         authority: process.env.CLOUD_INSTANCE + "/common/", // Full directory URL, in the form of https://login.microsoftonline.com/<tenant>
         clientSecret: process.env.CLIENT_SECRET // Client secret generated from the app registration in Azure portal
     },
+     cache: {
+      cacheLocation: "localStorage", // Configures cache location. "sessionStorage" is more secure, but "localStorage" gives you SSO.
+      storeAuthStateInCookie: false, // If you wish to store cache items in cookies as well as browser cache, set this to "true".
+    },
     system: {
         loggerOptions: {
             loggerCallback(loglevel, message, containsPii) {

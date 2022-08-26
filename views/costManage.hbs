@@ -29,6 +29,22 @@
                 <div id="resourceGroups"></div>
                  <div id="tableApp"></div>
 
+
+                <label for="fname">
+                    Start Date:
+                </label>
+                <input
+                    type="text"
+                    id="start"
+                    name="quantity"
+                /><label for="fname">
+                   End Date:
+                </label>
+                <input
+                    type="text"
+                    id="end"
+                    name="quantity"
+                />
                  <input
                     type="button"
                     value="calculate cost"
@@ -55,16 +71,19 @@ async function subscriptions() {
 
   }
 async function cost() {
+    var start = document.getElementById("start").value;
+    var end = document.getElementById("end").value;
+    let payload = { start,end };
             try {
                 let res = await
-                    axios.get("http://localhost:3000/api/cost/costByResourceGroups");
+                    axios.post("http://localhost:3000/api/cost/costByResourceGroups",payload);
 
                 document.getElementById("cost").innerHTML = JSON.stringify(
                     res.data,
                     null,
                     4
                 );
-                
+                console.log(res.data)
             } catch (err) { console.log(err) }
 
   }

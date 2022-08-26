@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <title>Get COst management data</title>
+</head>
+<body>
+    {{#if isAuthenticated}}
+<form id="form_id" name="myform">
+                <input
+                    type="button"
+                    value="Check Are you Admin"
+                    id="submit"
+                    onclick="CheckAdmin()"
+                />
+                <br />
+                <div id="CheckAdmin"></div>
+               
+               
+
+</form>
+<script>
+
+    async function CheckAdmin() {
+            try {
+                let res = await
+                    axios.get("http://localhost:3000/api/checkAdmin/");
+
+                document.getElementById("CheckAdmin").innerHTML = JSON.stringify(
+                    res.data,
+                    null,
+                    4
+                );
+                
+            } catch (err) { console.log(err) }
+
+  }
+asyn
+</script>
+{{else}}
+            <p>
+                Welcome to Powerboard
+            </p>
+           <a href="/api/auth/CheckSignIn">Sign with Azure</a>
+        {{/if}}
+</body>
+</html>

@@ -24,7 +24,15 @@ router.get("/dashboard", (req, res) => {
   });
   
 });
-
+router.get("/checkAdmin", (req, res) => {
+  res.render("checkAdmin", {
+    title: "checkAdmin",
+    isAuthenticated: req.session.isAuthenticated,
+    username: req.session.account?.username,
+    
+  });
+  
+});
 router.get("/billing", (req, res) => {
   res.render("billing", {
     title: "Billing Dashboard",
